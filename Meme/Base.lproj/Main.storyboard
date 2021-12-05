@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="moz-Ak-Fa8">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Meme" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="HlU-DH-kzr">
+                                <rect key="frame" x="20" y="108" width="374" height="708"/>
+                            </imageView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xYU-cW-OPg">
+                                <rect key="frame" x="0.0" y="818" width="414" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="7Iq-WZ-SdF"/>
+                                </constraints>
+                                <items>
+                                    <barButtonItem title="Pick" image="photo" catalog="system" id="y0o-Iz-rwp" userLabel="gallery">
+                                        <connections>
+                                            <action selector="pickAnImg:" destination="BYZ-38-t0r" id="hQ0-Yo-kGF"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="U3F-xP-cYf"/>
+                                    <barButtonItem image="camera.fill" catalog="system" id="ETa-fR-evw" userLabel="camera">
+                                        <connections>
+                                            <action selector="pickCamera:" destination="BYZ-38-t0r" id="Z7j-TZ-xHl"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="TOP" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tvS-bO-fRd">
+                                <rect key="frame" x="20" y="108" width="374" height="18.5"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="BOTTOM" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="TUV-b5-4PB" userLabel="Text Field 2">
+                                <rect key="frame" x="20" y="797.5" width="374" height="18.5"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters"/>
+                            </textField>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="xYU-cW-OPg" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="0We-Vc-7tu"/>
+                            <constraint firstItem="HlU-DH-kzr" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="5Kb-V8-smN"/>
+                            <constraint firstItem="HlU-DH-kzr" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="7Z1-NQ-5YA"/>
+                            <constraint firstItem="TUV-b5-4PB" firstAttribute="leading" secondItem="HlU-DH-kzr" secondAttribute="leading" id="Cef-Ue-IHY"/>
+                            <constraint firstItem="tvS-bO-fRd" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="MIn-oP-LPr"/>
+                            <constraint firstItem="TUV-b5-4PB" firstAttribute="bottom" secondItem="HlU-DH-kzr" secondAttribute="bottom" id="bLK-SX-SLe"/>
+                            <constraint firstAttribute="bottom" secondItem="TUV-b5-4PB" secondAttribute="bottom" constant="80" id="cgd-eC-dYH" userLabel="bottom = My Image Viewer.trailing + 10"/>
+                            <constraint firstItem="TUV-b5-4PB" firstAttribute="trailing" secondItem="tvS-bO-fRd" secondAttribute="trailing" id="dwF-eQ-mTG"/>
+                            <constraint firstItem="xYU-cW-OPg" firstAttribute="centerX" secondItem="HlU-DH-kzr" secondAttribute="centerX" id="enO-ni-fTS"/>
+                            <constraint firstAttribute="trailing" secondItem="xYU-cW-OPg" secondAttribute="trailing" id="gVt-HI-nwE"/>
+                            <constraint firstItem="tvS-bO-fRd" firstAttribute="trailing" secondItem="HlU-DH-kzr" secondAttribute="trailing" id="hoi-Us-zvk"/>
+                            <constraint firstItem="tvS-bO-fRd" firstAttribute="leading" secondItem="HlU-DH-kzr" secondAttribute="leading" id="jIV-gM-2sa"/>
+                            <constraint firstItem="xYU-cW-OPg" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="mRO-kb-FZA"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="VjH-hB-UFN"/>
+                    <connections>
+                        <outlet property="myImageViewer" destination="HlU-DH-kzr" id="LvI-gA-Hh4"/>
+                        <outlet property="myToolBar" destination="xYU-cW-OPg" id="QWu-TF-iP5"/>
+                        <outlet property="textField1" destination="tvS-bO-fRd" id="1wc-Br-8Tl"/>
+                        <outlet property="textField2" destination="TUV-b5-4PB" id="GBD-F4-Oxt"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="928.98550724637687" y="97.767857142857139"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Uo5-Ab-zKb">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="moz-Ak-Fa8" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="fbV-q2-m3s">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="A8H-3N-HaJ"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3E2-FX-qFj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="18.840579710144929" y="97.767857142857139"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="camera.fill" catalog="system" width="128" height="94"/>
+        <image name="photo" catalog="system" width="128" height="93"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
