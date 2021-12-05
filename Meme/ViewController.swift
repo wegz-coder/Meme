@@ -138,7 +138,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func saveImage(imgName: String, uiimage: UIImage) {
         
-        
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
         
         let fileName = imgName
