@@ -103,12 +103,12 @@
 			children = (
 				CE156EBF274F621D00CA33C7 /* AppDelegate.swift */,
 				CE156EC1274F621D00CA33C7 /* SceneDelegate.swift */,
+				CE156EEF2753AD6F00CA33C7 /* ImagePickerManager.swift */,
 				CE156EC3274F621D00CA33C7 /* ViewController.swift */,
 				CE156EC5274F621D00CA33C7 /* Main.storyboard */,
 				CE156EC8274F621F00CA33C7 /* Assets.xcassets */,
 				CE156ECA274F621F00CA33C7 /* LaunchScreen.storyboard */,
 				CE156ECD274F621F00CA33C7 /* Info.plist */,
-				CE156EEF2753AD6F00CA33C7 /* ImagePickerManager.swift */,
 			);
 			path = Meme;
 			sourceTree = "<group>";
