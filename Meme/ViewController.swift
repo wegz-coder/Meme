@@ -17,8 +17,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     var shiftOnlyOnce: Bool = true // shift keyboard only once due to callback get called several times.
     var imagePicker = UIImagePickerController()
-//    var memedImage: UIImage
-    
     let memeTextAttributes: [NSAttributedString.Key: Any] = [
         
         NSAttributedString.Key.font: UIFont(name: "HelveticaNeue-CondensedBlack", size: 30)!,
@@ -29,15 +27,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @objc func shareMeme(sender: UIBarButtonItem){
         print("| MEME | SAVED & SHARED !")
-        let  memedImage: UIImage  = save()
-        let myShare = "My meme photo!"
+        let  memedImage: UIImage  = saveMeme()
+        let myShare = "check this meme 🤣"
         let shareVC: UIActivityViewController = UIActivityViewController(activityItems: [(memedImage), myShare], applicationActivities: nil)
         self.present(shareVC, animated: true, completion: nil)
         
-        
-        //        let imageURLs: [URL] = loadImgURL(fileName: "meme")
-        //        let activityViewController = UIActivityViewController(activityItems: imageURLs, applicationActivities: nil)
-        //        self.present(activityViewController, animated: true, completion: nil)
     }
     func configureNav(){
         
@@ -56,6 +50,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
     }
     
+    // pick photo from gallery
     @IBAction func pickAnImg(_ sender: Any) {
         ImagePickerManager().pickImg2(self){ image in
             self.myImageViewer.image = image
@@ -64,6 +59,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
     }
     
+    // pick Camera photo
     @IBAction func pickCamera(_ sender: Any) {
         ImagePickerManager().pickCamera2(self){ image in
             //here is the image
@@ -94,7 +90,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         super.viewWillDisappear(animated)
         unsubscribeFromKeyboardNotifications()
     }
-    
+    // show keyboard be used when editing text.
     @objc func keyboardWillShow(_ notification:Notification) {
         //        print("shifting KEYBOARD NOW : \(shiftOnlyOnce)\n")
         if(shiftOnlyOnce){
@@ -103,12 +99,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
         
     }
+    // hide keyboard and return to original state
     @objc func keyboardWillHide(_ notification:Notification) {
         
         view.frame.origin.y =  0 //getKeyboardHeight(notification)
         shiftOnlyOnce = true
     }
     
+    // get keyboard height to be used when editing text.
     func getKeyboardHeight(_ notification:Notification) -> CGFloat {
         
         let userInfo = notification.userInfo
@@ -116,6 +114,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         return keyboardSize.cgRectValue.height
     }
     
+    // meme structure.
     struct Meme {
         var topText: String
         var bottomText: String
@@ -130,12 +129,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
     }
     
-    func save() -> UIImage {
+    func saveMeme() -> UIImage {
         let memedImage:UIImage = generateMemedImage()
         saveImage(imgName: "meme", uiimage: memedImage)
         return memedImage
     }
     
+    
+    // save meme image to be used afterwards
     func saveImage(imgName: String, uiimage: UIImage) {
         
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
@@ -163,24 +164,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
     }
     
-    
-    //    func loadImageFromDiskWith(fileName: String) -> UIImage? {
-    //
-    //      let documentDirectory = FileManager.SearchPathDirectory.documentDirectory
-    //
-    //        let userDomainMask = FileManager.SearchPathDomainMask.userDomainMask
-    //        let paths = NSSearchPathForDirectoriesInDomains(documentDirectory, userDomainMask, true)
-    //
-    //        if let dirPath = paths.first {
-    //            let imageUrl = URL(fileURLWithPath: dirPath).appendingPathComponent(fileName)
-    //            let image = UIImage(contentsOfFile: imageUrl.path)
-    //            return image
-    //
-    //        }
-    //
-    //        return nil
-    //    }
-    
+    // load meme image from memory
     func loadImgURL(fileName: String) -> URL? {
         
         let documentDirectory = FileManager.SearchPathDirectory.documentDirectory
@@ -195,6 +179,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     
+    // generate a picture with text on it.
     func generateMemedImage() -> UIImage {
         myToolBar.isHidden = true
         self.navigationController?.setNavigationBarHidden(true, animated: true)
