@@ -27,11 +27,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @objc func shareMeme(sender: UIBarButtonItem){
         print("| MEME | SAVED & SHARED !")
-        let  memedImage: UIImage  = saveMeme()
+        let  memedImage: UIImage  = generateMemedImage()
         let myShare = "check this meme 🤣"
         let shareVC: UIActivityViewController = UIActivityViewController(activityItems: [(memedImage), myShare], applicationActivities: nil)
+        shareVC.completionWithItemsHandler = {
+            (activity, completed, items, error) in
+            if completed {
+                self.saveImage(imgName: "meme", uiimage: memedImage)
+            }
+        }
         self.present(shareVC, animated: true, completion: nil)
-        
     }
     func configureNav(){
         
@@ -50,22 +55,31 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
     }
     
+    func presentPickerViewController(source: UIImagePickerController.SourceType) {
+        if(source == .camera){
+            ImagePickerManager().pickCamera2(self){ image in
+                //here is the image
+                self.myImageViewer.image = image
+                self.navigationItem.leftBarButtonItem?.isEnabled = true
+            }
+        }else if (source == .photoLibrary){
+            ImagePickerManager().pickImg2(self){ image in
+                self.myImageViewer.image = image
+                self.navigationItem.leftBarButtonItem?.isEnabled = true
+            }
+        }else{
+            print("undefined source!\n")
+        }
+    }
+    
     // pick photo from gallery
     @IBAction func pickAnImg(_ sender: Any) {
-        ImagePickerManager().pickImg2(self){ image in
-            self.myImageViewer.image = image
-            self.navigationItem.leftBarButtonItem?.isEnabled = true
-        }
-        
+        presentPickerViewController(source: .photoLibrary)
     }
     
     // pick Camera photo
     @IBAction func pickCamera(_ sender: Any) {
-        ImagePickerManager().pickCamera2(self){ image in
-            //here is the image
-            self.myImageViewer.image = image
-            self.navigationItem.leftBarButtonItem?.isEnabled = true
-        }
+        presentPickerViewController(source: .camera)
     }
     @objc func subscribeToKeyboardNotifications() {
         
@@ -94,8 +108,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @objc func keyboardWillShow(_ notification:Notification) {
         //        print("shifting KEYBOARD NOW : \(shiftOnlyOnce)\n")
         if(shiftOnlyOnce){
-            view.frame.origin.y -= getKeyboardHeight(notification)
-            shiftOnlyOnce = false
+            if textField2.isFirstResponder{
+                view.frame.origin.y = -getKeyboardHeight(notification)
+                shiftOnlyOnce = false
+            }
         }
         
     }
@@ -129,22 +145,18 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
     }
     
-    func saveMeme() -> UIImage {
+    func generateMeme() -> UIImage {
         let memedImage:UIImage = generateMemedImage()
-        saveImage(imgName: "meme", uiimage: memedImage)
         return memedImage
     }
     
     
     // save meme image to be used afterwards
     func saveImage(imgName: String, uiimage: UIImage) {
-        
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
-        
         let fileName = imgName
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
         guard let data = uiimage.jpegData(compressionQuality: 1) else { return }
-        
         //Checks if file exists, removes it if so.
         if FileManager.default.fileExists(atPath: fileURL.path) {
             do {
@@ -155,7 +167,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             }
             
         }
-        
         do {
             try data.write(to: fileURL)
         } catch let error {
