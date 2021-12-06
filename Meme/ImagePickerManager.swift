@@ -45,27 +45,25 @@ class ImagePickerManager: NSObject, UIImagePickerControllerDelegate, UINavigatio
         viewController.present(alert, animated: true, completion: nil)
     }
     
-    func pickCamera2(_ viewController: UIViewController, _ callback: @escaping ((UIImage) -> ())) {
+    func presentPhotoFromCameraOrLibrary(_ viewController: UIViewController,_ myPickerController: UIImagePickerController.SourceType, _ callback: @escaping ((UIImage) -> ())){
         pickImageCallback = callback;
         self.viewController = viewController;
-        if(UIImagePickerController .isSourceTypeAvailable(.camera)){
-            picker.sourceType = .camera
+        if(myPickerController == .camera){
+            if(UIImagePickerController .isSourceTypeAvailable(.camera)){
+                self.viewController!.present(picker, animated: true, completion: nil)
+            } else {
+                let alertController: UIAlertController = {
+                    let controller = UIAlertController(title: "Warning", message: "Camera Not Available!", preferredStyle: .alert)
+                    let action = UIAlertAction(title: "OK", style: .default)
+                    controller.addAction(action)
+                    return controller
+                }()
+                self.viewController?.present(alertController, animated: true)
+            }
+            
+        }else if(myPickerController == .photoLibrary){
             self.viewController!.present(picker, animated: true, completion: nil)
-        } else {
-            let alertController: UIAlertController = {
-                let controller = UIAlertController(title: "Warning", message: "Camera Not Available!", preferredStyle: .alert)
-                let action = UIAlertAction(title: "OK", style: .default)
-                controller.addAction(action)
-                return controller
-            }()
-            self.viewController?.present(alertController, animated: true)
         }
-    }
-    func pickImg2(_ viewController: UIViewController, _ callback: @escaping ((UIImage) -> ())) {
-        pickImageCallback = callback;
-        self.viewController = viewController;
-        picker.sourceType = .photoLibrary
-        self.viewController!.present(picker, animated: true, completion: nil)
     }
     
     

@@ -55,31 +55,20 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
     }
     
-    func presentPickerViewController(source: UIImagePickerController.SourceType) {
-        if(source == .camera){
-            ImagePickerManager().pickCamera2(self){ image in
-                //here is the image
-                self.myImageViewer.image = image
-                self.navigationItem.leftBarButtonItem?.isEnabled = true
-            }
-        }else if (source == .photoLibrary){
-            ImagePickerManager().pickImg2(self){ image in
-                self.myImageViewer.image = image
-                self.navigationItem.leftBarButtonItem?.isEnabled = true
-            }
-        }else{
-            print("undefined source!\n")
-        }
-    }
-    
     // pick photo from gallery
     @IBAction func pickAnImg(_ sender: Any) {
-        presentPickerViewController(source: .photoLibrary)
+        ImagePickerManager().presentPhotoFromCameraOrLibrary(self, .photoLibrary){ image in
+            self.myImageViewer.image = image
+            self.navigationItem.leftBarButtonItem?.isEnabled = true
+        }
     }
     
     // pick Camera photo
     @IBAction func pickCamera(_ sender: Any) {
-        presentPickerViewController(source: .camera)
+        ImagePickerManager().presentPhotoFromCameraOrLibrary(self, .camera){ image in
+            self.myImageViewer.image = image
+            self.navigationItem.leftBarButtonItem?.isEnabled = true
+        }
     }
     @objc func subscribeToKeyboardNotifications() {
         
