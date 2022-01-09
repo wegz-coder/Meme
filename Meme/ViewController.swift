@@ -50,7 +50,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 dateFormatter.dateFormat = "yyyyMMdd'_'HHmmss"
                 dateFormatter.timeZone = NSTimeZone(name: "GMT") as TimeZone?
                 let fileName = "meme_\(dateFormatter.string(from: date as Date))"
-                strongSelf.saveImage(imgName: fileName, uiimage: memedImage)
+                strongSelf.saveImage(imgName: fileName, memedImage: memedImage)
+                strongSelf.tabBarController?.tabBar.isHidden = false
+                strongSelf.navigationController?.popToRootViewController(animated: true)
             }
         }
         shareVC.isModalInPresentation = true
@@ -151,10 +153,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     
     // save meme image to be used afterwards
-    func saveImage(imgName: String, uiimage: UIImage) {
+    func saveImage(imgName: String, memedImage: UIImage) {
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
         let fileURL = documentsDirectory.appendingPathComponent(imgName)
-        guard let data = uiimage.jpegData(compressionQuality: 1) else { return }
+        guard let data = memedImage.jpegData(compressionQuality: 1) else { return }
         //Checks if file exists, removes it if so.
         if FileManager.default.fileExists(atPath: fileURL.path) {
             do {
@@ -167,8 +169,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
         do {
             try data.write(to: fileURL)
-            UIImageWriteToSavedPhotosAlbum(uiimage, self, nil, nil)
+            UIImageWriteToSavedPhotosAlbum(memedImage, self, nil, nil)
             print("saved the meme image to : \(fileURL)")
+            let meme = Meme(topText: textField1.text! , bottomText: textField2.text!, originalImage: myImageViewer.image! , memedImage: memedImage)
+            //add this meme to the memes array in the app delegate
+            print("meme added with topText: \(textField1.text!), and bottomText: \(textField2.text!)")
+            (UIApplication.shared.delegate as! AppDelegate).memes.append(meme)
+            print((UIApplication.shared.delegate as! AppDelegate).memes)
+            
         } catch let error {
             print("error saving file with error", error)
         }
@@ -200,12 +208,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         myToolBar.isHidden = false
-        // Create the meme
-        let meme = Meme(topText: textField1.text!, bottomText: textField2.text!, originalImage: myImageViewer.image!, memedImage: memedImage)
-        // Add it to the memes array in the Application Delegate
-        let object = UIApplication.shared.delegate
-        let appDelegate = object as! AppDelegate
-        appDelegate.memes.append(meme)
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         return memedImage
     }
