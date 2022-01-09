@@ -25,26 +25,52 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         NSAttributedString.Key.strokeWidth:  -3.5
     ]
     
-    @objc func shareMeme(sender: UIBarButtonItem){
-        print("| MEME | SAVED & SHARED !")
+    @objc func shareMemeAll(sender: UIBarButtonItem) {
+        let text = "check this meme 🤣"
         let  memedImage: UIImage  = generateMemedImage()
-        let myShare = "check this meme 🤣"
-        let shareVC: UIActivityViewController = UIActivityViewController(activityItems: [(memedImage), myShare], applicationActivities: nil)
+//        let myWebsite = NSURL(string:"https://stackoverflow.com/users/4600136/mr-javed-multani?tab=profile")
+        let shareAll = [text , memedImage] as [Any]
+        let shareVC = UIActivityViewController(activityItems: shareAll, applicationActivities: nil)
+        shareVC.excludedActivityTypes = [
+            UIActivity.ActivityType(rawValue: "com.apple.reminders.RemindersEditorExtension"),
+               UIActivity.ActivityType.assignToContact,
+               UIActivity.ActivityType.addToReadingList,
+
+           ]
+        shareVC.popoverPresentationController?.sourceView = self.view
         shareVC.completionWithItemsHandler = {
-            (activity, completed, items, error) in
+            [weak self] (activity, completed, items, error)  in
             if completed {
-                self.saveImage(imgName: "meme", uiimage: memedImage)
+                print("completed meme share!")
+                guard let strongSelf = self else {
+                    return
+                }
+                let date :NSDate = NSDate()
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyyMMdd'_'HHmmss"
+                dateFormatter.timeZone = NSTimeZone(name: "GMT") as TimeZone?
+                let fileName = "meme_\(dateFormatter.string(from: date as Date))"
+                strongSelf.saveImage(imgName: fileName, uiimage: memedImage)
             }
         }
+        shareVC.isModalInPresentation = true
         self.present(shareVC, animated: true, completion: nil)
+       }
+    
+    @objc func goToTabView(sender: UIBarButtonItem){
+        print("Cancel doing Meme!")
+        self.tabBarController?.tabBar.isHidden = false
+        self.navigationController?.popToRootViewController(animated: true)
     }
+
     func configureNav(){
-        
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up") , style: .done, target: self, action: #selector(shareMeme(sender:)))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up") , style: .done, target: self, action: #selector(shareMemeAll(sender:)))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Cancel" , style: .plain, target: self, action: #selector(goToTabView(sender:)))
         self.navigationItem.leftBarButtonItem?.isEnabled = false
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("ViewDidLoad: ViewController!")
         title = ""
         configureNav()
         // Do any additional setup after loading the view.
@@ -83,7 +109,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
         super.viewWillAppear(animated)
         subscribeToKeyboardNotifications()
     }
@@ -119,21 +144,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         return keyboardSize.cgRectValue.height
     }
     
-    // meme structure.
-    struct Meme {
-        var topText: String
-        var bottomText: String
-        var originalImage: UIImage
-        var memedImage: UIImage
-        
-        init( topText: String , bottomText:String, originalImage: UIImage, memedImage: UIImage){
-            self.topText = topText
-            self.bottomText = bottomText
-            self.originalImage = originalImage
-            self.memedImage = memedImage
-        }
-    }
-    
     func generateMeme() -> UIImage {
         let memedImage:UIImage = generateMemedImage()
         return memedImage
@@ -143,8 +153,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     // save meme image to be used afterwards
     func saveImage(imgName: String, uiimage: UIImage) {
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
-        let fileName = imgName
-        let fileURL = documentsDirectory.appendingPathComponent(fileName)
+        let fileURL = documentsDirectory.appendingPathComponent(imgName)
         guard let data = uiimage.jpegData(compressionQuality: 1) else { return }
         //Checks if file exists, removes it if so.
         if FileManager.default.fileExists(atPath: fileURL.path) {
@@ -158,6 +167,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
         do {
             try data.write(to: fileURL)
+            UIImageWriteToSavedPhotosAlbum(uiimage, self, nil, nil)
+            print("saved the meme image to : \(fileURL)")
         } catch let error {
             print("error saving file with error", error)
         }
@@ -189,6 +200,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         myToolBar.isHidden = false
+        // Create the meme
+        let meme = Meme(topText: textField1.text!, bottomText: textField2.text!, originalImage: myImageViewer.image!, memedImage: memedImage)
+        // Add it to the memes array in the Application Delegate
+        let object = UIApplication.shared.delegate
+        let appDelegate = object as! AppDelegate
+        appDelegate.memes.append(meme)
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         return memedImage
     }
