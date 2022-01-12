@@ -78,6 +78,7 @@ class MemeListViewController : UIViewController, UITableViewDataSource, UITableV
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("tableView viewWillAppear")
+        memeTableView.reloadData()
     }
     
     @objc func reloadData(_ notification: Notification?) {
