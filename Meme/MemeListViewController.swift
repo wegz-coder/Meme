@@ -72,8 +72,6 @@ class MemeListViewController : UIViewController, UITableViewDataSource, UITableV
         NotificationCenter.default.addObserver(self, selector:  #selector(self.reloadData(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
         memeTableView.delegate = self
         memeTableView.dataSource = self
-//        appDelegate.memes.append(Meme(topText: "Hi" , bottomText:"Bye", originalImage: UIImage(systemName: "heart.fill")! , memedImage: UIImage(systemName: "heart.fill")!))
-        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
