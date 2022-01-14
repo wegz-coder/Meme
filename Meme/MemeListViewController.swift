@@ -65,9 +65,14 @@ class MemeListViewController : UIViewController, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        print("you tapped me table!")
+        print("you tapped me in table!")
         let meme = memesHere[indexPath.row]
-        print(meme.topText)
+        guard let vc = storyboard?.instantiateViewController(identifier: "ViewController") as? ViewController else{
+            print("failed to initiate VC!")
+            return
+        }
+        present(vc, animated: true)
+        NotificationCenter.default.post(name: Notification.Name("MeMe"), object: meme)
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         

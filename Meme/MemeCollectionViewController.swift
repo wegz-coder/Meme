@@ -68,18 +68,15 @@ class MemeCollectionViewController : UIViewController {
 extension MemeCollectionViewController:UICollectionViewDelegate{
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        print("you tapped me collection!")
+        print("you tapped me in collection!")
         let meme = memesHere[indexPath.row]
         print(meme.topText)
         guard let vc = storyboard?.instantiateViewController(identifier: "ViewController") as? ViewController else{
             print("failed to initiate VC!")
             return
         }
-        tabBarController?.tabBar.isHidden = true
-        vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
         NotificationCenter.default.post(name: Notification.Name("MeMe"), object: meme)
-        
     }
 }
 extension MemeCollectionViewController:UICollectionViewDataSource{
