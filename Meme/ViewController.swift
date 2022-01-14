@@ -15,7 +15,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet weak var textField1: UITextField!
     @IBOutlet weak var textField2: UITextField!
     
-    var shiftOnlyOnce: Bool = true // shift keyboard only once due to callback get called several times.
     var imagePicker = UIImagePickerController()
     let memeTextAttributes: [NSAttributedString.Key: Any] = [
         
@@ -28,7 +27,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @objc func shareMemeAll(sender: UIBarButtonItem) {
         let text = "check this meme 🤣"
         let  memedImage: UIImage  = generateMemedImage()
-//        let myWebsite = NSURL(string:"https://stackoverflow.com/users/4600136/mr-javed-multani?tab=profile")
         let shareAll = [text , memedImage] as [Any]
         let shareVC = UIActivityViewController(activityItems: shareAll, applicationActivities: nil)
         shareVC.excludedActivityTypes = [
@@ -56,19 +54,19 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             }
         }
         shareVC.isModalInPresentation = true
-        self.present(shareVC, animated: true, completion: nil)
+        present(shareVC, animated: true, completion: nil)
        }
     
     @objc func goToTabView(sender: UIBarButtonItem){
         print("Cancel doing Meme!")
-        self.tabBarController?.tabBar.isHidden = false
-        self.navigationController?.popToRootViewController(animated: true)
+        tabBarController?.tabBar.isHidden = false
+        navigationController?.popToRootViewController(animated: true)
     }
 
     func configureNav(){
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up") , style: .done, target: self, action: #selector(shareMemeAll(sender:)))
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Cancel" , style: .plain, target: self, action: #selector(goToTabView(sender:)))
-        self.navigationItem.leftBarButtonItem?.isEnabled = false
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up") , style: .done, target: self, action: #selector(shareMemeAll(sender:)))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Cancel" , style: .plain, target: self, action: #selector(goToTabView(sender:)))
+        navigationItem.leftBarButtonItem?.isEnabled = false
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -76,12 +74,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         title = ""
         configureNav()
         // Do any additional setup after loading the view.
-        textField1.defaultTextAttributes = memeTextAttributes
-        textField2.defaultTextAttributes = memeTextAttributes
-        textField1.textAlignment = .center
-        textField2.textAlignment = .center
+        setupTextField(textField1)
+        setupTextField(textField2)
+        
         
     }
+    
+    func setupTextField(_ textField: UITextField) {
+        textField.defaultTextAttributes = memeTextAttributes
+        textField.textAlignment = .center
+      }
     
     // pick photo from gallery
     @IBAction func pickAnImg(_ sender: Any) {
@@ -105,9 +107,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     func unsubscribeFromKeyboardNotifications() {
-        
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        // remove all observers at once
+        NotificationCenter.default.removeObserver(self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -122,12 +123,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     // show keyboard be used when editing text.
     @objc func keyboardWillShow(_ notification:Notification) {
-        //        print("shifting KEYBOARD NOW : \(shiftOnlyOnce)\n")
-        if(shiftOnlyOnce){
             if textField2.isFirstResponder{
                 view.frame.origin.y = -getKeyboardHeight(notification)
-                shiftOnlyOnce = false
-            }
         }
         
     }
@@ -135,7 +132,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @objc func keyboardWillHide(_ notification:Notification) {
         
         view.frame.origin.y =  0 //getKeyboardHeight(notification)
-        shiftOnlyOnce = true
     }
     
     // get keyboard height to be used when editing text.

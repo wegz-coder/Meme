@@ -15,7 +15,6 @@ class MemeCollectionViewController : UIViewController {
     // MARK: Properties
     @IBOutlet var memeCollectionView: UICollectionView!
     
-    let allMemes = Meme.allMemes
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var memesHere: [Meme]! {
         let object = UIApplication.shared.delegate
@@ -32,7 +31,7 @@ class MemeCollectionViewController : UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        configureNav()
         // layout.itemSize = CGSize(width: 120, height: 200)
         let flowLayout = UICollectionViewFlowLayout()
         let space:CGFloat = 3.0
@@ -47,12 +46,40 @@ class MemeCollectionViewController : UIViewController {
         memeCollectionView.delegate = self
         memeCollectionView.dataSource = self
     }
+    
+    func configureNav(){
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus") , style: .done, target: self, action: #selector(createMeme(sender:)))
+        self.navigationItem.leftBarButtonItem?.isEnabled = false
+    }
+    
+    @objc func createMeme(sender: UIBarButtonItem){
+        print("open meme editor!")
+        guard let vc = storyboard?.instantiateViewController(identifier: "ViewController") as? ViewController else{
+            print("failed to initiate VC!")
+            return
+        }
+        tabBarController?.tabBar.isHidden = true
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
 }
 
 extension MemeCollectionViewController:UICollectionViewDelegate{
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        print("you tapped me!")
+        print("you tapped me collection!")
+        let meme = memesHere[indexPath.row]
+        print(meme.topText)
+        guard let vc = storyboard?.instantiateViewController(identifier: "ViewController") as? ViewController else{
+            print("failed to initiate VC!")
+            return
+        }
+        tabBarController?.tabBar.isHidden = true
+        vc.myImageViewer.image! = meme.originalImage
+        vc.textField1.text! = meme.topText
+        vc.textField2.text! = meme.bottomText
+        navigationController?.pushViewController(vc, animated: true)
+     
     }
 }
 extension MemeCollectionViewController:UICollectionViewDataSource{

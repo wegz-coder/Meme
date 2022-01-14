@@ -45,6 +45,16 @@ class ImagePickerManager: NSObject, UIImagePickerControllerDelegate, UINavigatio
         viewController.present(alert, animated: true, completion: nil)
     }
     
+    func presentErrorAlert(title: String, message: String){
+        let alertController: UIAlertController = {
+            let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let action = UIAlertAction(title: "OK", style: .default)
+            controller.addAction(action)
+            return controller
+        }()
+        self.viewController?.present(alertController, animated: true)
+    }
+    
     func presentPhotoFromCameraOrLibrary(_ viewController: UIViewController,_ myPickerController: UIImagePickerController.SourceType, _ callback: @escaping ((UIImage) -> ())){
         pickImageCallback = callback;
         self.viewController = viewController;
@@ -52,20 +62,14 @@ class ImagePickerManager: NSObject, UIImagePickerControllerDelegate, UINavigatio
             if(UIImagePickerController .isSourceTypeAvailable(.camera)){
                 self.viewController!.present(picker, animated: true, completion: nil)
             } else {
-                let alertController: UIAlertController = {
-                    let controller = UIAlertController(title: "Warning", message: "Camera Not Available!", preferredStyle: .alert)
-                    let action = UIAlertAction(title: "OK", style: .default)
-                    controller.addAction(action)
-                    return controller
-                }()
-                self.viewController?.present(alertController, animated: true)
+                presentErrorAlert(title: "Warning", message: "Camera Not Available!")
             }
-            
+
         }else if(myPickerController == .photoLibrary){
             self.viewController!.present(picker, animated: true, completion: nil)
         }
     }
-    
+
     
     func openCamera(){
         alert.dismiss(animated: true, completion: nil)
@@ -73,13 +77,7 @@ class ImagePickerManager: NSObject, UIImagePickerControllerDelegate, UINavigatio
             picker.sourceType = .camera
             self.viewController!.present(picker, animated: true, completion: nil)
         } else {
-            let alertController: UIAlertController = {
-                let controller = UIAlertController(title: "Warning", message: "Camera Not Available!", preferredStyle: .alert)
-                let action = UIAlertAction(title: "OK", style: .default)
-                controller.addAction(action)
-                return controller
-            }()
-            viewController?.present(alertController, animated: true)
+            presentErrorAlert(title: "Warning", message: "Camera Not Available!")
         }
     }
     func openGallery(){
