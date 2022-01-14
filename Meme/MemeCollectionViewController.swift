@@ -16,6 +16,7 @@ class MemeCollectionViewController : UIViewController {
     @IBOutlet var memeCollectionView: UICollectionView!
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    
     var memesHere: [Meme]! {
         let object = UIApplication.shared.delegate
         let appDelegate = object as! AppDelegate
@@ -75,11 +76,10 @@ extension MemeCollectionViewController:UICollectionViewDelegate{
             return
         }
         tabBarController?.tabBar.isHidden = true
-        vc.myImageViewer.image! = meme.originalImage
-        vc.textField1.text! = meme.topText
-        vc.textField2.text! = meme.bottomText
-        navigationController?.pushViewController(vc, animated: true)
-     
+        vc.modalPresentationStyle = .fullScreen
+        present(vc, animated: true)
+        NotificationCenter.default.post(name: Notification.Name("MeMe"), object: meme)
+        
     }
 }
 extension MemeCollectionViewController:UICollectionViewDataSource{

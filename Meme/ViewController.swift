@@ -62,6 +62,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         tabBarController?.tabBar.isHidden = false
         navigationController?.popToRootViewController(animated: true)
     }
+    @objc func didGetNotification(_ notification: Notification){
+        let meme = notification.object as! Meme?
+        textField1.text = meme?.topText
+        textField2.text = meme?.bottomText
+        myImageViewer.image = meme?.originalImage
+    }
 
     func configureNav(){
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up") , style: .done, target: self, action: #selector(shareMemeAll(sender:)))
@@ -76,8 +82,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         // Do any additional setup after loading the view.
         setupTextField(textField1)
         setupTextField(textField2)
-        
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(didGetNotification(_:)), name: Notification.Name("MeMe"), object: nil) 
     }
     
     func setupTextField(_ textField: UITextField) {
