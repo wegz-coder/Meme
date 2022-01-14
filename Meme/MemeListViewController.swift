@@ -72,6 +72,8 @@ class MemeListViewController : UIViewController, UITableViewDataSource, UITableV
             return
         }
         present(vc, animated: true)
+//        tabBarController?.tabBar.isHidden = true
+//        navigationController?.pushViewController(vc, animated: true)
         NotificationCenter.default.post(name: Notification.Name("MeMe"), object: meme)
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

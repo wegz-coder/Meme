@@ -24,6 +24,43 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         NSAttributedString.Key.strokeWidth:  -3.5
     ]
     
+    // pick photo from gallery
+    @IBAction func pickAnImg(_ sender: Any) {
+        ImagePickerManager().presentPhotoFromCameraOrLibrary(self, .photoLibrary){ image in
+            self.myImageViewer.image = image
+            self.navigationItem.leftBarButtonItem?.isEnabled = true
+        }
+    }
+    
+    // pick Camera photo
+    @IBAction func pickCamera(_ sender: Any) {
+        ImagePickerManager().presentPhotoFromCameraOrLibrary(self, .camera){ image in
+            self.myImageViewer.image = image
+            self.navigationItem.leftBarButtonItem?.isEnabled = true
+        }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        print("ViewDidLoad: ViewController!")
+        title = ""
+        configureNav()
+        // Do any additional setup after loading the view.
+        setupTextField(textField1)
+        setupTextField(textField2)
+        NotificationCenter.default.addObserver(self, selector: #selector(didGetNotification(_:)), name: Notification.Name("MeMe"), object: nil)
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        subscribeToKeyboardNotifications()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        
+        super.viewWillDisappear(animated)
+        unsubscribeFromKeyboardNotifications()
+    }
+    
+    
     @objc func shareMemeAll(sender: UIBarButtonItem) {
         let text = "check this meme 🤣"
         let  memedImage: UIImage  = generateMemedImage()
@@ -31,10 +68,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let shareVC = UIActivityViewController(activityItems: shareAll, applicationActivities: nil)
         shareVC.excludedActivityTypes = [
             UIActivity.ActivityType(rawValue: "com.apple.reminders.RemindersEditorExtension"),
-               UIActivity.ActivityType.assignToContact,
-               UIActivity.ActivityType.addToReadingList,
-
-           ]
+            UIActivity.ActivityType.assignToContact,
+            UIActivity.ActivityType.addToReadingList,
+            
+        ]
         shareVC.popoverPresentationController?.sourceView = self.view
         shareVC.completionWithItemsHandler = {
             [weak self] (activity, completed, items, error)  in
@@ -55,81 +92,31 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
         shareVC.isModalInPresentation = true
         present(shareVC, animated: true, completion: nil)
-       }
+    }
     
     @objc func goToTabView(sender: UIBarButtonItem){
         print("Cancel doing Meme!")
         tabBarController?.tabBar.isHidden = false
         navigationController?.popToRootViewController(animated: true)
     }
+    
     @objc func didGetNotification(_ notification: Notification){
         let meme = notification.object as! Meme?
         textField1.text = meme?.topText
         textField2.text = meme?.bottomText
         myImageViewer.image = meme?.originalImage
     }
-
-    func configureNav(){
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up") , style: .done, target: self, action: #selector(shareMemeAll(sender:)))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Cancel" , style: .plain, target: self, action: #selector(goToTabView(sender:)))
-        navigationItem.leftBarButtonItem?.isEnabled = false
-    }
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        print("ViewDidLoad: ViewController!")
-        title = ""
-        configureNav()
-        // Do any additional setup after loading the view.
-        setupTextField(textField1)
-        setupTextField(textField2)
-        NotificationCenter.default.addObserver(self, selector: #selector(didGetNotification(_:)), name: Notification.Name("MeMe"), object: nil) 
-    }
     
-    func setupTextField(_ textField: UITextField) {
-        textField.defaultTextAttributes = memeTextAttributes
-        textField.textAlignment = .center
-      }
-    
-    // pick photo from gallery
-    @IBAction func pickAnImg(_ sender: Any) {
-        ImagePickerManager().presentPhotoFromCameraOrLibrary(self, .photoLibrary){ image in
-            self.myImageViewer.image = image
-            self.navigationItem.leftBarButtonItem?.isEnabled = true
-        }
-    }
-    
-    // pick Camera photo
-    @IBAction func pickCamera(_ sender: Any) {
-        ImagePickerManager().presentPhotoFromCameraOrLibrary(self, .camera){ image in
-            self.myImageViewer.image = image
-            self.navigationItem.leftBarButtonItem?.isEnabled = true
-        }
-    }
     @objc func subscribeToKeyboardNotifications() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
-    func unsubscribeFromKeyboardNotifications() {
-        // remove all observers at once
-        NotificationCenter.default.removeObserver(self)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        subscribeToKeyboardNotifications()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        
-        super.viewWillDisappear(animated)
-        unsubscribeFromKeyboardNotifications()
-    }
     // show keyboard be used when editing text.
     @objc func keyboardWillShow(_ notification:Notification) {
-            if textField2.isFirstResponder{
-                view.frame.origin.y = -getKeyboardHeight(notification)
+        if textField2.isFirstResponder{
+            view.frame.origin.y = -getKeyboardHeight(notification)
         }
         
     }
@@ -138,6 +125,30 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         view.frame.origin.y =  0 //getKeyboardHeight(notification)
     }
+    
+    
+    func configureNav(){
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up") , style: .done, target: self, action: #selector(shareMemeAll(sender:)))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Cancel" , style: .plain, target: self, action: #selector(goToTabView(sender:)))
+        navigationItem.leftBarButtonItem?.isEnabled = false
+    }
+    
+    
+    
+    func setupTextField(_ textField: UITextField) {
+        textField.defaultTextAttributes = memeTextAttributes
+        textField.textAlignment = .center
+    }
+    
+    
+    
+    
+    func unsubscribeFromKeyboardNotifications() {
+        // remove all observers at once
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    
     
     // get keyboard height to be used when editing text.
     func getKeyboardHeight(_ notification:Notification) -> CGFloat {
